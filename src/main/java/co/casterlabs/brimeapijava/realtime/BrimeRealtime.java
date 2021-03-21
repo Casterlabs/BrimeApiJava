@@ -13,20 +13,18 @@ import io.ably.lib.types.ClientOptions;
 import lombok.NonNull;
 import lombok.Setter;
 
-public class BrimeRealtimeChat implements Closeable {
+public class BrimeRealtime implements Closeable {
     private AblyRealtime ably;
 
-    private @Setter @Nullable BrimeChatListener listener;
+    private @Setter @Nullable BrimeRealtimeListener listener;
 
     /**
      * Only use this if you've gotten permission.
      * 
-     * Make sure to set {@link BrimeApi.ABLY_REALTIME_TOKEN}
-     * 
      * @throws AblyException
      */
     @Deprecated
-    public BrimeRealtimeChat(@NonNull String ablyToken, @NonNull String channelName) throws AblyException {
+    public BrimeRealtime(@NonNull String ablyToken, @NonNull String channelName) throws AblyException {
         ClientOptions options = new ClientOptions(ablyToken);
 
         options.autoConnect = false;
@@ -54,13 +52,30 @@ public class BrimeRealtimeChat implements Closeable {
             }
         });
 
-        this.ably.channels.get(channelName).subscribe((message) -> {
+        this.ably.channels.get(channelName.toLowerCase() + "/alerts").subscribe((message) -> {
+            if (this.listener != null) {
+                switch (message.name) {
+                    case "alert": {
+                        JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
+
+                        this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+        this.ably.channels.get(channelName.toLowerCase()).subscribe((message) -> {
             if (this.listener != null) {
                 switch (message.name) {
                     case "greeting": {
                         JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
 
                         this.listener.onChat(data.get("username").getAsString(), data.get("color").getAsString(), data.get("message").getAsString());
+                        break;
                     }
 
                     default:
