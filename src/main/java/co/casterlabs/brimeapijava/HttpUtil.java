@@ -37,6 +37,7 @@ public class HttpUtil {
         }
 
         builder.addHeader("x-client-type", "casterlabs-api-lib");
+        builder.addHeader("content-type", "application/json");
 
         Request request = builder.build();
         Response response = client.newCall(request).execute();
