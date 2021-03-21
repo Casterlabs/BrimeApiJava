@@ -8,6 +8,10 @@ public interface BrimeRealtimeListener {
 
     public void onFollow(String username, String id);
 
+    public void onJoin(String username);
+
+    public void onLeave(String username);
+
     default void onClose() {}
 
 }

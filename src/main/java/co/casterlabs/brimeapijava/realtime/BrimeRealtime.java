@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 
 import co.casterlabs.brimeapijava.BrimeApi;
 import io.ably.lib.realtime.AblyRealtime;
+import io.ably.lib.realtime.Channel;
 import io.ably.lib.types.AblyException;
 import io.ably.lib.types.ClientOptions;
 import lombok.NonNull;
@@ -68,7 +69,26 @@ public class BrimeRealtime implements Closeable {
             }
         });
 
-        this.ably.channels.get(channelName.toLowerCase()).subscribe((message) -> {
+        Channel channel = this.ably.channels.get(channelName.toLowerCase());
+
+        channel.presence.subscribe((message) -> {
+            if (this.listener != null) {
+                switch (message.action) {
+                    case absent:
+                    case leave:
+                        this.listener.onLeave(message.clientId);
+                        break;
+
+                    case enter:
+                    case present:
+                    case update:
+                        this.listener.onJoin(message.clientId);
+                        break;
+                }
+            }
+        });
+
+        channel.subscribe((message) -> {
             if (this.listener != null) {
                 switch (message.name) {
                     case "greeting": {
