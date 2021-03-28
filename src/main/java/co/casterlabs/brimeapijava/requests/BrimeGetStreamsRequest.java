@@ -9,30 +9,36 @@ import com.google.gson.reflect.TypeToken;
 
 import co.casterlabs.apiutil.auth.ApiAuthException;
 import co.casterlabs.apiutil.web.ApiException;
-import co.casterlabs.apiutil.web.WebRequest;
+import co.casterlabs.apiutil.web.AuthenticatedWebRequest;
 import co.casterlabs.brimeapijava.BrimeApi;
+import co.casterlabs.brimeapijava.BrimeApplicationAuth;
 import co.casterlabs.brimeapijava.HttpUtil;
 import co.casterlabs.brimeapijava.types.BrimeStream;
+import lombok.NonNull;
 import okhttp3.Response;
 
-public class BrimeGetStreamsRequest extends WebRequest<List<BrimeStream>> {
+public class BrimeGetStreamsRequest extends AuthenticatedWebRequest<List<BrimeStream>, BrimeApplicationAuth> {
     private static final Type LIST_TYPE = new TypeToken<List<BrimeStream>>() {
     }.getType();
 
+    public BrimeGetStreamsRequest(@NonNull BrimeApplicationAuth auth) {
+        super(auth);
+    }
+
     @Override
     protected List<BrimeStream> execute() throws ApiException, ApiAuthException, IOException {
-        Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/streams");
+        Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/streams", this.auth);
         String body = response.body().string();
 
         response.close();
 
-        if (response.code() == 401) {
+        JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
+
+        if (json.has("errors")) {
             throw new ApiAuthException(body);
         } else {
             try {
-                JsonObject data = BrimeApi.GSON.fromJson(body, JsonObject.class);
-
-                return BrimeApi.GSON.fromJson(data.get("streams"), LIST_TYPE);
+                return BrimeApi.GSON.fromJson(json.getAsJsonObject("data").get("streams"), LIST_TYPE);
             } catch (Exception e) {
                 throw new ApiException(e);
             }

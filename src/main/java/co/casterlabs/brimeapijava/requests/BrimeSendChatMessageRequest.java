@@ -6,48 +6,50 @@ import com.google.gson.JsonObject;
 
 import co.casterlabs.apiutil.auth.ApiAuthException;
 import co.casterlabs.apiutil.web.ApiException;
-import co.casterlabs.apiutil.web.WebRequest;
+import co.casterlabs.apiutil.web.AuthenticatedWebRequest;
 import co.casterlabs.brimeapijava.BrimeApi;
+import co.casterlabs.brimeapijava.BrimeUserAuth;
 import co.casterlabs.brimeapijava.HttpUtil;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import okhttp3.Response;
 
 @Setter
+@NonNull
 @Accessors(chain = true)
-@RequiredArgsConstructor
-public class BrimeSendChatMessageRequest extends WebRequest<Void> {
-    private @NonNull String token;
-
-    private String channel;
-    private String color;
-    private String username;
+public class BrimeSendChatMessageRequest extends AuthenticatedWebRequest<Void, BrimeUserAuth> {
+    private String color = "#ea4c4c";
+    private String channelId;
     private String message;
+
+    public BrimeSendChatMessageRequest(@NonNull BrimeUserAuth auth) {
+        super(auth);
+    }
 
     @Override
     protected Void execute() throws ApiException, ApiAuthException, IOException {
-        JsonObject payload = new JsonObject();
+        if (this.channelId == null) {
+            throw new ApiException("No channel id specified");
+        } else if (this.message == null) {
+            throw new ApiException("No message specified");
+        } else {
+            JsonObject payload = new JsonObject();
 
-        payload.addProperty("color", this.color);
-        payload.addProperty("token", this.token);
-        payload.addProperty("channel", this.channel);
-        payload.addProperty("message", this.message);
-        payload.addProperty("username", this.username);
+            payload.addProperty("color", this.color);
+            payload.addProperty("message", this.message);
 
-        Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/chat/send");
-        String body = response.body().string();
+            Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/chat/send/" + this.channelId, this.auth);
+            String body = response.body().string();
 
-        response.close();
+            response.close();
 
-        if ((response.code() == 401) || (response.code() == 403)) {
-            throw new ApiAuthException(body);
-        } else if ((response.code() == 404) || body.isEmpty()) {
-            throw new ApiException("Invalid channel name");
+            if (response.code() != 200) {
+                throw new ApiAuthException(body);
+            }
+
+            return null;
         }
-
-        return null;
     }
 
 }

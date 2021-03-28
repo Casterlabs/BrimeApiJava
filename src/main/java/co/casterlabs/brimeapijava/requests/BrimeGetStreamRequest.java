@@ -10,26 +10,26 @@ import co.casterlabs.apiutil.web.AuthenticatedWebRequest;
 import co.casterlabs.brimeapijava.BrimeApi;
 import co.casterlabs.brimeapijava.BrimeApplicationAuth;
 import co.casterlabs.brimeapijava.HttpUtil;
-import co.casterlabs.brimeapijava.types.BrimeChannel;
+import co.casterlabs.brimeapijava.types.BrimeStream;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import okhttp3.Response;
 
 @Accessors(chain = true)
-public class BrimeGetChannelRequest extends AuthenticatedWebRequest<BrimeChannel, BrimeApplicationAuth> {
+public class BrimeGetStreamRequest extends AuthenticatedWebRequest<BrimeStream, BrimeApplicationAuth> {
     private @Setter @NonNull String channel;
 
-    public BrimeGetChannelRequest(@NonNull BrimeApplicationAuth auth) {
+    public BrimeGetStreamRequest(@NonNull BrimeApplicationAuth auth) {
         super(auth);
     }
 
     @Override
-    protected BrimeChannel execute() throws ApiException, ApiAuthException, IOException {
+    protected BrimeStream execute() throws ApiException, ApiAuthException, IOException {
         if (this.channel == null) {
             throw new ApiException("No channel specified");
         } else {
-            Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/channel/" + this.channel, this.auth);
+            Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/stream/" + this.channel, this.auth);
             String body = response.body().string();
 
             response.close();
@@ -40,7 +40,7 @@ public class BrimeGetChannelRequest extends AuthenticatedWebRequest<BrimeChannel
                 throw new ApiAuthException(body);
             } else {
                 try {
-                    return BrimeApi.GSON.fromJson(json.getAsJsonObject("data"), BrimeChannel.class);
+                    return BrimeApi.GSON.fromJson(json.getAsJsonObject("data"), BrimeStream.class);
                 } catch (Exception e) {
                     throw new ApiException(e);
                 }

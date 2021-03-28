@@ -1,5 +1,7 @@
 package co.casterlabs.brimeapijava.types;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Getter;
@@ -8,22 +10,30 @@ import lombok.ToString;
 @Getter
 @ToString
 public class BrimeStream {
-	@SerializedName("strm")
-	private String streamer;
+    @SerializedName("_id")
+    private String channelId;
 
-	@SerializedName("publish_time")
-	private long publishTime;
+    @SerializedName("channel")
+    private String channelName;
 
-	private int bandwidth;
+    private String category;
 
-	private String resolution;
+    private String title;
 
-	private String protocol;
+    private boolean isLive;
 
-	@SerializedName("vcodec")
-	private String videoCodec;
+    private String publishTime;
 
-	@SerializedName("acodec")
-	private String audioCodec;
+    private int bandwidth;
+
+    private List<String> resolutions;
+
+    @SerializedName("vcodec")
+    private String videoCodec;
+
+    @SerializedName("acodec")
+    private String audioCodec;
+
+    private String protocol;
 
 }

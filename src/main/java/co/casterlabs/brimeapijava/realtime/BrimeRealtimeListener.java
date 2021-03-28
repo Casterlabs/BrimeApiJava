@@ -4,7 +4,7 @@ public interface BrimeRealtimeListener {
 
     default void onOpen() {}
 
-    public void onChat(String username, String color, String message);
+    public void onChat(BrimeChatMessage chat);
 
     public void onFollow(String username, String id);
 

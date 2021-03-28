@@ -92,9 +92,9 @@ public class BrimeRealtime implements Closeable {
             if (this.listener != null) {
                 switch (message.name) {
                     case "greeting": {
-                        JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
+                        BrimeChatMessage chat = BrimeApi.GSON.fromJson((String) message.data, BrimeChatMessage.class);
 
-                        this.listener.onChat(data.get("username").getAsString(), data.get("color").getAsString(), data.get("message").getAsString());
+                        this.listener.onChat(chat);
                         break;
                     }
 

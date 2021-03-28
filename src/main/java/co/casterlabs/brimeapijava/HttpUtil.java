@@ -15,16 +15,18 @@ import okhttp3.Response;
 public class HttpUtil {
     private static OkHttpClient client = new OkHttpClient();
 
-    public static Response sendHttpGet(@NonNull String address) throws IOException {
-        return sendHttp(null, null, address, null);
+    public static Response sendHttpGet(@NonNull String address, @NonNull BrimeApplicationAuth auth) throws IOException {
+        return sendHttp(null, null, address, null, auth);
     }
 
-    public static Response sendHttp(@NonNull String body, @NonNull String address) throws IOException {
-        return sendHttp(RequestBody.create(body.getBytes(StandardCharsets.UTF_8)), "POST", address, null);
+    public static Response sendHttp(@NonNull String body, @NonNull String address, @NonNull BrimeApplicationAuth auth) throws IOException {
+        return sendHttp(RequestBody.create(body.getBytes(StandardCharsets.UTF_8)), "POST", address, null, auth);
     }
 
-    public static Response sendHttp(@Nullable RequestBody body, @Nullable String type, @NonNull String address, @Nullable Map<String, String> headers) throws IOException {
+    public static Response sendHttp(@Nullable RequestBody body, @Nullable String type, @NonNull String address, @Nullable Map<String, String> headers, @NonNull BrimeApplicationAuth auth) throws IOException {
         Request.Builder builder = new Request.Builder().url(address);
+
+        auth.authenticateRequest(builder);
 
         if ((body != null) && (type != null)) {
             builder.method(type.toUpperCase(), body);
