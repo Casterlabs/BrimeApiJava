@@ -10,7 +10,7 @@ public class BrimeApi {
     /**
      * Change this as needed.
      */
-    public static String targetApiEndpoint = PRODUCTION_API;
+    public static String targetApiEndpoint = STAGING_API;
 
     // @formatter:off
     public static final Gson GSON = new GsonBuilder()
