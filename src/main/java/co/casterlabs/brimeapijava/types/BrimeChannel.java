@@ -16,7 +16,7 @@ public class BrimeChannel {
     @SerializedName("channel")
     private String channelName;
 
-    private String category;
+    private BrimeCategory category;
 
     private String title;
 
