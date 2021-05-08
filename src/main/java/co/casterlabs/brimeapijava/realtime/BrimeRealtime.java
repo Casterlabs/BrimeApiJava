@@ -59,7 +59,25 @@ public class BrimeRealtime implements Closeable {
                     case "alert": {
                         JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
 
-                        this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
+                        String type = data.get("type").getAsString();
+
+                        switch (type) {
+                            case "follow": {
+                                this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
+                                break;
+                            }
+
+                            case "subscribe": {
+                                this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), false);
+                                break;
+                            }
+
+                            case "resubscribe": {
+                                this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), true);
+                                break;
+                            }
+
+                        }
                         break;
                     }
 

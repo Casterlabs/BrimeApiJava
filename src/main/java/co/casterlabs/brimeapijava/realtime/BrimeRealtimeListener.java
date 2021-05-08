@@ -6,12 +6,14 @@ public interface BrimeRealtimeListener {
 
     public void onChat(BrimeChatMessage chat);
 
-    public void onFollow(String username, String id);
+    public void onFollow(String username, String userId);
 
     public void onJoin(String username);
 
     public void onLeave(String username);
 
     default void onClose() {}
+
+    public void onSub(String username, String userId, boolean isResub);
 
 }
