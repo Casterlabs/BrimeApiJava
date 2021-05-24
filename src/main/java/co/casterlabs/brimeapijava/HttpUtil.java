@@ -23,6 +23,10 @@ public class HttpUtil {
         return sendHttp(RequestBody.create(body.getBytes(StandardCharsets.UTF_8)), "POST", address, null, auth);
     }
 
+    public static Response sendHttp(@NonNull String body, @NonNull String method, @NonNull String address, @NonNull BrimeApplicationAuth auth) throws IOException {
+        return sendHttp(RequestBody.create(body.getBytes(StandardCharsets.UTF_8)), method, address, null, auth);
+    }
+
     public static Response sendHttp(@Nullable RequestBody body, @Nullable String type, @NonNull String address, @Nullable Map<String, String> headers, @NonNull BrimeApplicationAuth auth) throws IOException {
         Request.Builder builder = new Request.Builder().url(address);
 

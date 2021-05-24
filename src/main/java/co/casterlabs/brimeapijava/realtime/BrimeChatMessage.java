@@ -16,6 +16,9 @@ import lombok.ToString;
 public class BrimeChatMessage {
     private static final String IMAGE_URL_FORMAT = "https://content.brimecdn.com/brime/emote/%s/%s";
 
+    @SerializedName("_id")
+    private String messageId;
+
     @SerializedName("channelID")
     private String channelId;
     private String message;

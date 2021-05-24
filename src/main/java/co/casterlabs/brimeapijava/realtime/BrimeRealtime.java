@@ -25,7 +25,7 @@ public class BrimeRealtime implements Closeable {
      * @throws AblyException
      */
     @Deprecated
-    public BrimeRealtime(@NonNull String ablyToken, @NonNull String channelName) throws AblyException {
+    public BrimeRealtime(@NonNull String ablyToken, @NonNull String channelId) throws AblyException {
         ClientOptions options = new ClientOptions(ablyToken);
 
         options.autoConnect = false;
@@ -53,31 +53,23 @@ public class BrimeRealtime implements Closeable {
             }
         });
 
-        this.ably.channels.get(channelName.toLowerCase() + "/alerts").subscribe((message) -> {
+        this.ably.channels.get(channelId + "/events").subscribe((message) -> {
             if (this.listener != null) {
+                JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
+
                 switch (message.name) {
-                    case "alert": {
-                        JsonObject data = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
+                    case "follow": {
+                        this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
+                        break;
+                    }
 
-                        String type = data.get("type").getAsString();
+                    case "subscribe": {
+                        this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), false);
+                        break;
+                    }
 
-                        switch (type) {
-                            case "follow": {
-                                this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
-                                break;
-                            }
-
-                            case "subscribe": {
-                                this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), false);
-                                break;
-                            }
-
-                            case "resubscribe": {
-                                this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), true);
-                                break;
-                            }
-
-                        }
+                    case "resubscribe": {
+                        this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), true);
                         break;
                     }
 
@@ -87,7 +79,7 @@ public class BrimeRealtime implements Closeable {
             }
         });
 
-        Channel channel = this.ably.channels.get(channelName.toLowerCase());
+        Channel channel = this.ably.channels.get(channelId + "/chat");
 
         channel.presence.subscribe((message) -> {
             if (this.listener != null) {
@@ -109,10 +101,19 @@ public class BrimeRealtime implements Closeable {
         channel.subscribe((message) -> {
             if (this.listener != null) {
                 switch (message.name) {
-                    case "greeting": {
+                    case "chat": {
                         BrimeChatMessage chat = BrimeApi.GSON.fromJson((String) message.data, BrimeChatMessage.class);
 
                         this.listener.onChat(chat);
+                        break;
+                    }
+
+                    case "delete": {
+                        JsonObject json = BrimeApi.GSON.fromJson((String) message.data, JsonObject.class);
+
+                        String messageId = json.get("messageID").getAsString();
+
+                        this.listener.onChatDelete(messageId);
                         break;
                     }
 
