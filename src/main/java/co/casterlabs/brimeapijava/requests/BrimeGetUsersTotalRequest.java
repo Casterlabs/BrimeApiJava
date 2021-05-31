@@ -21,17 +21,16 @@ public class BrimeGetUsersTotalRequest extends AuthenticatedWebRequest<Integer, 
 
     @Override
     protected Integer execute() throws ApiException, ApiAuthException, IOException {
-        Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/users", this.auth);
-        String body = response.body().string();
+        try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/users", this.auth)) {
+            String body = response.body().string();
 
-        response.close();
+            JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
 
-        JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
-
-        if (json.has("errors")) {
-            throw new ApiException(body);
-        } else {
-            return json.getAsJsonObject("data").get("total").getAsInt();
+            if (json.has("errors")) {
+                throw new ApiException(body);
+            } else {
+                return json.getAsJsonObject("data").get("total").getAsInt();
+            }
         }
     }
 

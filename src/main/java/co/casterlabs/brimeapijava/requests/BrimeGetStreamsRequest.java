@@ -27,20 +27,15 @@ public class BrimeGetStreamsRequest extends AuthenticatedWebRequest<List<BrimeSt
 
     @Override
     protected List<BrimeStream> execute() throws ApiException, ApiAuthException, IOException {
-        Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/streams", this.auth);
-        String body = response.body().string();
+        try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/streams", this.auth)) {
+            String body = response.body().string();
 
-        response.close();
+            JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
 
-        JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
-
-        if (json.has("errors")) {
-            throw new ApiAuthException(body);
-        } else {
-            try {
+            if (json.has("errors")) {
+                throw new ApiAuthException(body);
+            } else {
                 return BrimeApi.GSON.fromJson(json.getAsJsonObject("data").get("streams"), LIST_TYPE);
-            } catch (Exception e) {
-                throw new ApiException(e);
             }
         }
     }

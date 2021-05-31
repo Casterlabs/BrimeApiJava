@@ -29,20 +29,15 @@ public class BrimeGetChannelRequest extends AuthenticatedWebRequest<BrimeChannel
         if (this.channel == null) {
             throw new ApiException("No channel specified");
         } else {
-            Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/channel/" + this.channel, this.auth);
-            String body = response.body().string();
+            try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/channel/" + this.channel, this.auth)) {
+                String body = response.body().string();
 
-            response.close();
+                JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
 
-            JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
-
-            if (json.has("errors")) {
-                throw new ApiAuthException(body);
-            } else {
-                try {
+                if (json.has("errors")) {
+                    throw new ApiAuthException(body);
+                } else {
                     return BrimeApi.GSON.fromJson(json.getAsJsonObject("data"), BrimeChannel.class);
-                } catch (Exception e) {
-                    throw new ApiException(e);
                 }
             }
         }

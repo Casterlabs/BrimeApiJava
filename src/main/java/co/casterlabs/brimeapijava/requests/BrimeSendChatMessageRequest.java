@@ -39,16 +39,15 @@ public class BrimeSendChatMessageRequest extends AuthenticatedWebRequest<Void, B
             payload.addProperty("color", this.color);
             payload.addProperty("message", this.message);
 
-            Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/chat/send/" + this.channelId, this.auth);
-            String body = response.body().string();
+            try (Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/chat/send/" + this.channelId, this.auth)) {
+                if (response.code() != 200) {
+                    String body = response.body().string();
 
-            response.close();
+                    throw new ApiAuthException(body);
+                }
 
-            if (response.code() != 200) {
-                throw new ApiAuthException(body);
+                return null;
             }
-
-            return null;
         }
     }
 

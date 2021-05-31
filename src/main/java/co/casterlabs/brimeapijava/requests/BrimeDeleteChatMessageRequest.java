@@ -33,16 +33,15 @@ public class BrimeDeleteChatMessageRequest extends AuthenticatedWebRequest<Void,
         } else {
             String url = String.format("%s/internal/channel/%s/chat/message/%s", BrimeApi.targetApiEndpoint, this.channelId, this.messageId);
 
-            Response response = HttpUtil.sendHttp("{}", "DELETE", url, this.auth);
-            String body = response.body().string();
+            try (Response response = HttpUtil.sendHttp("{}", "DELETE", url, this.auth)) {
+                if (response.code() != 200) {
+                    String body = response.body().string();
 
-            response.close();
+                    throw new ApiAuthException(body);
+                }
 
-            if (response.code() != 200) {
-                throw new ApiAuthException(body);
+                return null;
             }
-
-            return null;
         }
     }
 

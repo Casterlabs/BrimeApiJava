@@ -36,11 +36,8 @@ public class BrimeUserAuth extends BrimeApplicationAuth {
 
         payload.addProperty("refreshToken", this.refreshToken);
 
-        try {
-            Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/auth/refresh", this);
+        try (Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/auth/refresh", this)) {
             String body = response.body().string();
-
-            response.close();
 
             JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
 
