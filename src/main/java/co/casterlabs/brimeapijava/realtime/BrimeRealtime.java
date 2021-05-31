@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import co.casterlabs.brimeapijava.BrimeApi;
 import io.ably.lib.realtime.AblyRealtime;
 import io.ably.lib.realtime.Channel;
+import io.ably.lib.realtime.ConnectionState;
 import io.ably.lib.types.AblyException;
 import io.ably.lib.types.ClientOptions;
 import lombok.NonNull;
@@ -126,6 +127,10 @@ public class BrimeRealtime implements Closeable {
 
     public void connect() {
         this.ably.connect();
+    }
+
+    public boolean isOpen() {
+        return this.ably.connection.state == ConnectionState.connected;
     }
 
     @Override
