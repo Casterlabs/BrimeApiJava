@@ -21,8 +21,14 @@ public class BrimeUser {
 
     private String color;
 
+    private boolean isBrimePro;
+
     private List<String> roles;
 
     private List<String> badges;
+
+    private boolean extendedVodsEnabled;
+
+    private List<String> channels;
 
 }

@@ -16,6 +16,8 @@ public class BrimeChannel {
     @SerializedName("channel")
     private String channelName;
 
+    private String icon;
+
     private BrimeCategory category;
 
     private String title;
@@ -28,6 +30,14 @@ public class BrimeChannel {
 
     private String description;
 
+    private boolean isMonetized;
+
+    private boolean vodsEnabled;
+
+    private String offlineImageUrl;
+
     private List<String> owners;
+
+    private List<String> moderators;
 
 }

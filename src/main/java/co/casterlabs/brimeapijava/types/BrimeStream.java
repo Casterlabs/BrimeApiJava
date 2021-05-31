@@ -16,24 +16,35 @@ public class BrimeStream {
     @SerializedName("channel")
     private String channelName;
 
+    private String streamThumbnailUrl;
+
     private BrimeCategory category;
 
     private String title;
 
     private boolean isLive;
 
-    private String publishTime;
+    private long publishTime;
 
-    private int bandwidth;
+    private List<BrimeStreamMeta> streams;
 
-    private List<String> resolutions;
+    @Getter
+    @ToString
+    public static class BrimeStreamMeta {
+        private int bandwidth;
 
-    @SerializedName("vcodec")
-    private String videoCodec;
+        private String resolution;
 
-    @SerializedName("acodec")
-    private String audioCodec;
+        @SerializedName("vcodec")
+        private String videoCodec;
 
-    private String protocol;
+        @SerializedName("acodec")
+        private String audioCodec;
+
+        private String protocol;
+
+        private boolean isSource;
+
+    }
 
 }
