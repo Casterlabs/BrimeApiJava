@@ -1,4 +1,4 @@
-package co.casterlabs.brimeapijava.requests;
+package co.casterlabs.brimeapijava.internalrequests.chat;
 
 import java.io.IOException;
 
@@ -39,7 +39,9 @@ public class BrimeSendChatMessageRequest extends AuthenticatedWebRequest<Void, B
             payload.addProperty("color", this.color);
             payload.addProperty("message", this.message);
 
-            try (Response response = HttpUtil.sendHttp(payload.toString(), BrimeApi.targetApiEndpoint + "/internal/chat/send/" + this.channelId, this.auth)) {
+            String url = String.format("%s/internal/chat/send/%s", BrimeApi.targetApiEndpoint, this.channelId);
+
+            try (Response response = HttpUtil.sendHttp(payload.toString(), url, this.auth)) {
                 if (response.code() != 200) {
                     String body = response.body().string();
 

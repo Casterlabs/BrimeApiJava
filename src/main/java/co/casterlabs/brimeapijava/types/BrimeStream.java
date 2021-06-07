@@ -2,6 +2,8 @@ package co.casterlabs.brimeapijava.types;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Getter;
@@ -16,6 +18,7 @@ public class BrimeStream {
     @SerializedName("channel")
     private String channelName;
 
+    @Nullable
     private String streamThumbnailUrl;
 
     private BrimeCategory category;
@@ -26,7 +29,11 @@ public class BrimeStream {
 
     private long publishTime;
 
+    @Nullable
     private List<BrimeStreamMeta> streams;
+
+    @Nullable
+    private BrimeUser broadcastingUser;
 
     @Getter
     @ToString

@@ -1,4 +1,4 @@
-package co.casterlabs.brimeapijava.requests;
+package co.casterlabs.brimeapijava.requests.users;
 
 import java.io.IOException;
 
@@ -21,7 +21,9 @@ public class BrimeGetUsersTotalRequest extends AuthenticatedWebRequest<Integer, 
 
     @Override
     protected Integer execute() throws ApiException, ApiAuthException, IOException {
-        try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/users", this.auth)) {
+        String url = String.format("%s/v1/users", BrimeApi.targetApiEndpoint);
+
+        try (Response response = HttpUtil.sendHttpGet(url, this.auth)) {
             String body = response.body().string();
 
             JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);

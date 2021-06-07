@@ -1,4 +1,4 @@
-package co.casterlabs.brimeapijava.requests;
+package co.casterlabs.brimeapijava.requests.streams;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -17,17 +17,19 @@ import co.casterlabs.brimeapijava.types.BrimeStream;
 import lombok.NonNull;
 import okhttp3.Response;
 
-public class BrimeGetStreamsRequest extends AuthenticatedWebRequest<List<BrimeStream>, BrimeApplicationAuth> {
+public class BrimeGetAllLiveStreamsRequest extends AuthenticatedWebRequest<List<BrimeStream>, BrimeApplicationAuth> {
     private static final Type LIST_TYPE = new TypeToken<List<BrimeStream>>() {
     }.getType();
 
-    public BrimeGetStreamsRequest(@NonNull BrimeApplicationAuth auth) {
+    public BrimeGetAllLiveStreamsRequest(@NonNull BrimeApplicationAuth auth) {
         super(auth);
     }
 
     @Override
     protected List<BrimeStream> execute() throws ApiException, ApiAuthException, IOException {
-        try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/streams", this.auth)) {
+        String url = String.format("%s/v1/streams", BrimeApi.targetApiEndpoint);
+
+        try (Response response = HttpUtil.sendHttpGet(url, this.auth)) {
             String body = response.body().string();
 
             JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);

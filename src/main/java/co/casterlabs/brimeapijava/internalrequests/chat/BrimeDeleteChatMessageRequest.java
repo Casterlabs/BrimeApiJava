@@ -1,4 +1,4 @@
-package co.casterlabs.brimeapijava.requests;
+package co.casterlabs.brimeapijava.internalrequests.chat;
 
 import java.io.IOException;
 

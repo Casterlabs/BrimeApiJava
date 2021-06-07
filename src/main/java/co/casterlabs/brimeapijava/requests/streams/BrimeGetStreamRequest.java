@@ -1,4 +1,4 @@
-package co.casterlabs.brimeapijava.requests;
+package co.casterlabs.brimeapijava.requests.streams;
 
 import java.io.IOException;
 
@@ -10,26 +10,28 @@ import co.casterlabs.apiutil.web.AuthenticatedWebRequest;
 import co.casterlabs.brimeapijava.BrimeApi;
 import co.casterlabs.brimeapijava.BrimeApplicationAuth;
 import co.casterlabs.brimeapijava.HttpUtil;
-import co.casterlabs.brimeapijava.types.BrimeChannel;
+import co.casterlabs.brimeapijava.types.BrimeStream;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import okhttp3.Response;
 
 @Accessors(chain = true)
-public class BrimeGetChannelRequest extends AuthenticatedWebRequest<BrimeChannel, BrimeApplicationAuth> {
+public class BrimeGetStreamRequest extends AuthenticatedWebRequest<BrimeStream, BrimeApplicationAuth> {
     private @Setter @NonNull String channel;
 
-    public BrimeGetChannelRequest(@NonNull BrimeApplicationAuth auth) {
+    public BrimeGetStreamRequest(@NonNull BrimeApplicationAuth auth) {
         super(auth);
     }
 
     @Override
-    protected BrimeChannel execute() throws ApiException, ApiAuthException, IOException {
+    protected BrimeStream execute() throws ApiException, ApiAuthException, IOException {
         if (this.channel == null) {
             throw new ApiException("No channel specified");
         } else {
-            try (Response response = HttpUtil.sendHttpGet(BrimeApi.targetApiEndpoint + "/v1/channel/" + this.channel, this.auth)) {
+            String url = String.format("%s/v1/stream/%s", BrimeApi.targetApiEndpoint, this.channel);
+
+            try (Response response = HttpUtil.sendHttpGet(url, this.auth)) {
                 String body = response.body().string();
 
                 JsonObject json = BrimeApi.GSON.fromJson(body, JsonObject.class);
@@ -37,7 +39,7 @@ public class BrimeGetChannelRequest extends AuthenticatedWebRequest<BrimeChannel
                 if (json.has("errors")) {
                     throw new ApiAuthException(body);
                 } else {
-                    return BrimeApi.GSON.fromJson(json.getAsJsonObject("data"), BrimeChannel.class);
+                    return BrimeApi.GSON.fromJson(json.getAsJsonObject("data"), BrimeStream.class);
                 }
             }
         }
