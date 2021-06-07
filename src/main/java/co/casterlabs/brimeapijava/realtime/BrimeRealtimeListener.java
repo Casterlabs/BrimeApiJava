@@ -16,6 +16,8 @@ public interface BrimeRealtimeListener {
 
     public void onSub(String username, String userId, boolean isResub);
 
+    public void onRaid(String channel, String channelId, int viewers);
+
     public void onChatDelete(String messageId);
 
 }

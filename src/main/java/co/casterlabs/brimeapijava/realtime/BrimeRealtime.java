@@ -60,17 +60,37 @@ public class BrimeRealtime implements Closeable {
 
                 switch (message.name) {
                     case "follow": {
-                        this.listener.onFollow(data.get("follower").getAsString(), data.get("followerID").getAsString());
+                        this.listener.onFollow(
+                            data.get("follower").getAsString(),
+                            data.get("followerID").getAsString()
+                        );
                         break;
                     }
 
                     case "subscribe": {
-                        this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), false);
+                        this.listener.onSub(
+                            data.get("subscriber").getAsString(),
+                            data.get("subscriberID").getAsString(),
+                            false
+                        );
                         break;
                     }
 
                     case "resubscribe": {
-                        this.listener.onSub(data.get("subscriber").getAsString(), data.get("subscriberID").getAsString(), true);
+                        this.listener.onSub(
+                            data.get("subscriber").getAsString(),
+                            data.get("subscriberID").getAsString(),
+                            true
+                        );
+                        break;
+                    }
+
+                    case "raid_notice": {
+                        this.listener.onRaid(
+                            data.get("raidingChannel").getAsString(),
+                            data.get("raidingChannelID").getAsString(),
+                            data.get("viewers").getAsInt()
+                        );
                         break;
                     }
 
