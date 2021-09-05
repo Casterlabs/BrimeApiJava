@@ -1,43 +1,72 @@
 package co.casterlabs.brimeapijava.types;
 
-import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
-
+import co.casterlabs.rakurai.json.annotating.JsonClass;
+import co.casterlabs.rakurai.json.annotating.JsonField;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@JsonClass(exposeAll = true)
 public class BrimeChannel {
-    @SerializedName("_id")
-    private String channelId;
+    private BrimeChannelData channel;
+    private BrimeChannelOwner owner;
+    private BrimeChannelStream stream;
 
-    @SerializedName("channel")
-    private String channelName;
+    @Getter
+    @ToString
+    @JsonClass(exposeAll = true)
+    public static class BrimeChannelData {
+        private String xid;
 
-    private String icon;
+        @JsonField("legacy_id")
+        private String legacyId;
 
-    private BrimeCategory category;
+        private String slug;
 
-    private String title;
+        private String status;
 
-    private boolean isLive;
+        @JsonField("stream_category_slug")
+        private String streamCategorySlug;
 
-    private int followerCount;
+        @JsonField("is_live")
+        private int isLive;
 
-    private int subscriberCount;
+        private String displayname;
 
-    private String description;
+        public boolean isLive() {
+            return this.isLive > 0;
+        }
 
-    private boolean isMonetized;
+    }
 
-    private boolean vodsEnabled;
+    @Getter
+    @ToString
+    @JsonClass(exposeAll = true)
+    public static class BrimeChannelOwner {
+        @JsonField("channel_owner_xid")
+        private String channelOwnerXid;
 
-    private String offlineImageUrl;
+        @JsonField("channel_owner_legacy_id")
+        private String channelOwnerLegacyId;
 
-    private List<String> owners;
+    }
 
-    private List<String> moderators;
+    @Getter
+    @ToString
+    @JsonClass(exposeAll = true)
+    public static class BrimeChannelStream {
+        private String title;
+
+        @JsonField("category_name")
+        private String category_name;
+
+        @JsonField("category_xid")
+        private String categoryXid;
+
+        @JsonField("category_slug")
+        private String categorySlug;
+
+    }
 
 }

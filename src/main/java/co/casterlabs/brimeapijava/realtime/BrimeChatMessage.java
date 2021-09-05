@@ -1,48 +1,97 @@
 package co.casterlabs.brimeapijava.realtime;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Instant;
 
-import com.google.gson.annotations.SerializedName;
-
-import co.casterlabs.brimeapijava.types.BrimeUser;
-import lombok.AllArgsConstructor;
+import co.casterlabs.rakurai.json.annotating.JsonClass;
+import co.casterlabs.rakurai.json.annotating.JsonField;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
-@AllArgsConstructor
+@JsonClass(exposeAll = true)
 public class BrimeChatMessage {
-    private static final String IMAGE_URL_FORMAT = "https://content.brimecdn.com/brime/emote/%s/%s";
-
-    @SerializedName("_id")
+    @JsonField("xid")
     private String messageId;
 
-    @SerializedName("channelID")
-    private String channelId;
-    private String message;
-    private BrimeUser sender;
-    private Map<String, BrimeChatEmote> emotes = new HashMap<>();
+    private String channel;
+
+    private Instant timestamp;
+
+    private BrimeChatMessage reply;
+
+    @JsonField("user")
+    private BrimeMessageSender sender;
+
+    private BrimeMessageContent content;
 
     @Getter
     @ToString
-    public static class BrimeChatEmote {
-        @SerializedName("_id")
-        private String emoteId;
+    @JsonClass(exposeAll = true)
+    public static class BrimeMessageSender {
+        private String xid;
 
-        public String get1xImageUrl() {
-            return String.format(IMAGE_URL_FORMAT, this.emoteId, "1x");
+        @JsonField("legacy_id")
+        private String legacyId;
+
+        private String username;
+
+        private String displayname;
+
+        private String color;
+
+    }
+
+    @Getter
+    @ToString
+    @JsonClass(exposeAll = true)
+    public static class BrimeMessageContent {
+        private String type;
+        private String raw;
+        private String parsed;
+
+        private BrimeMessageMeta meta;
+
+        @Getter
+        @ToString
+        @JsonClass(exposeAll = true)
+        public static class BrimeMessageMeta {
+            private BrimeMessageSender[] mentions;
+
+            private BrimeMessageLink[] links;
+
+            private BrimeMessageEmote[] emotes;
+
+            @JsonField("attachements")
+            private BrimeMessageAttachment[] attachments;
+
+            @Getter
+            @ToString
+            @JsonClass(exposeAll = true)
+            public static class BrimeMessageEmote {
+                private String xid;
+                private String code;
+                private String src;
+            }
+
+            @Getter
+            @ToString
+            @JsonClass(exposeAll = true)
+            public static class BrimeMessageLink {
+                private String match;
+                private String host;
+            }
+
+            @Getter
+            @ToString
+            @JsonClass(exposeAll = true)
+            public static class BrimeMessageAttachment {
+                private String type;
+                private String mime;
+                private String src;
+                private String preview;
+            }
         }
-
-        public String get2xImageUrl() {
-            return String.format(IMAGE_URL_FORMAT, this.emoteId, "2x");
-        }
-
-        public String get3xImageUrl() {
-            return String.format(IMAGE_URL_FORMAT, this.emoteId, "3x");
-        }
-
     }
 
 }
