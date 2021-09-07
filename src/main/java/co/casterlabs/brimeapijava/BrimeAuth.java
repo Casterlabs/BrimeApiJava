@@ -63,6 +63,7 @@ public class BrimeAuth extends AuthProvider {
 
                 this.accessToken = data.accessToken;
                 this.expiresIn = data.expiresIn;
+                this.loginTimestamp = System.currentTimeMillis();
             }
         } catch (IOException | JsonParseException e) {
             throw new ApiAuthException(e);
