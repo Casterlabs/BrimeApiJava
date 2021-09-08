@@ -42,13 +42,13 @@ public class BrimeChat implements Closeable {
 
     public BrimeChat(@NonNull BrimeChannel channel, @NonNull BrimeAuth auth) throws IOException, ApiAuthException, ApiException {
         try {
-            this.channel = channel.getChannel().getDisplayname().toLowerCase(); // This will be XID based soon.
+            this.channel = channel.getChannel().getXid(); // This will be XID based soon.
             this.auth = auth;
 
             BrimeAccount account = new BrimeGetAccountRequest(this.auth)
                 .send();
 
-            String username = account.getUsername(); // account.getXid();
+            String username = account.getXid();
 
             this.publisher = new MqttClient("ssl://chat-us.brime.tv:8084", UUID.randomUUID().toString(), new MemoryPersistence());
 
