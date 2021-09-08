@@ -48,7 +48,7 @@ public class BrimeChat implements Closeable {
             BrimeAccount account = new BrimeGetAccountRequest(this.auth)
                 .send();
 
-            String username = account.getXid();
+            String username = account.getUsername(); // account.getXid();
 
             this.publisher = new MqttClient("ssl://chat-us.brime.tv:8084", UUID.randomUUID().toString(), new MemoryPersistence());
 
