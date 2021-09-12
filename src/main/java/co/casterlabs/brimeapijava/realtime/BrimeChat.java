@@ -42,7 +42,7 @@ public class BrimeChat implements Closeable {
 
     public BrimeChat(@NonNull BrimeChannel channel, @NonNull BrimeAuth auth) throws IOException, ApiAuthException, ApiException {
         try {
-            this.channel = channel.getChannel().getDisplayname(); // This will be XID based soon.
+            this.channel = channel.getChannel().getDisplayname().toLowerCase(); // This will be XID based soon.
             this.auth = auth;
 
             BrimeAccount account = new BrimeGetAccountRequest(this.auth)
@@ -88,10 +88,10 @@ public class BrimeChat implements Closeable {
                 }
                 this.options.setPassword(this.auth.getAccessToken().toCharArray());
 
-                this.publisher.connect(this.options);
+                this.publisher.connectWithResult(this.options);
 
-                this.publisher.subscribe(
-                    "channel/chat/receive/" + this.channel,
+                this.publisher.subscribeWithResponse(
+                    String.format("channel/chat/receive/%s", this.channel),
                     (topic, message) -> {
                         if (this.listener != null) {
                             try {
