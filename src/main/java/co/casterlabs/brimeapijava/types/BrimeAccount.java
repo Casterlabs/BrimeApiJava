@@ -18,8 +18,8 @@ public class BrimeAccount {
 
     private String email;
 
-    @JsonField("email_verified")
-    private boolean emailVerified;
+//    @JsonField("email_verified")
+//    private boolean emailVerified;
 
     private String username;
 
@@ -27,7 +27,7 @@ public class BrimeAccount {
 
     private Instant created;
 
-    @JsonField("has_avatar")
-    private boolean hasAvatar;
+//    @JsonField("has_avatar")
+//    private boolean hasAvatar;
 
 }
