@@ -30,13 +30,9 @@ public class BrimeChannel {
         private String streamCategorySlug;
 
         @JsonField("is_live")
-        private int isLive;
+        private boolean isLive;
 
         private String displayname;
-
-        public boolean isLive() {
-            return this.isLive > 0;
-        }
 
     }
 

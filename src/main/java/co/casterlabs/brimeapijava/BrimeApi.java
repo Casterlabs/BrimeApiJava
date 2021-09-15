@@ -16,13 +16,17 @@ public class BrimeApi {
         .registerTypeResolver(new TypeResolver<Instant>() {
             @Override
             public @Nullable Instant resolve(@NonNull JsonElement value, @NonNull Class<?> type) {
-                long longValue = value.getAsNumber().longValue();
-
-                // Very dirty way... But it works!
-                if (longValue < 5000000000l) {
-                    return Instant.ofEpochSecond(longValue);
+                if (value.isJsonNull()) {
+                    return null;
                 } else {
-                    return Instant.ofEpochMilli(longValue);
+                    long longValue = value.getAsNumber().longValue();
+
+                    // Very dirty way... But it works!
+                    if (longValue < 5000000000l) {
+                        return Instant.ofEpochSecond(longValue);
+                    } else {
+                        return Instant.ofEpochMilli(longValue);
+                    }
                 }
             }
 
